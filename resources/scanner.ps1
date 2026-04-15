@@ -26,7 +26,7 @@ if (-not (Test-Path $RulesPath)) {
     exit 1
 }
 
-$rulesData = Get-Content -Path $RulesPath -Raw | ConvertFrom-Json
+$rulesData = Get-Content -Path $RulesPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $rules = $rulesData.rules
 
 # ============================================================

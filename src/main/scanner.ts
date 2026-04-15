@@ -63,15 +63,17 @@ export function runScan(
 
     ps.stdout.on('data', (data: Buffer) => {
       const chunk = data.toString()
-      // Progress lines: PROGRESS:index:total:name
+      // PROGRESS lines are complete lines — strip them out, accumulate rest raw
       chunk.split('\n').forEach((line) => {
         if (line.startsWith('PROGRESS:')) {
           const parts = line.trim().split(':')
+          // parts: [PROGRESS, index, total, ...name fragments]
           if (parts.length >= 4) {
-            onProgress(parts[3], parseInt(parts[1]), parseInt(parts[2]))
+            onProgress(parts.slice(3).join(':'), parseInt(parts[1]), parseInt(parts[2]))
           }
         } else {
-          stdout += line + '\n'
+          // Accumulate raw — do NOT re-add \n, it would corrupt JSON split across chunks
+          stdout += line
         }
       })
     })

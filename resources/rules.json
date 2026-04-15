@@ -297,7 +297,7 @@
       "vendor": "Google",
       "category": "Offer",
       "detectOnly": true,
-      "note": "Chrome may have been installed via a CCleaner offer. Flagged for awareness only — not auto-removed.",
+      "note": "Chrome may have been installed via a CCleaner offer. Flagged for awareness only - not auto-removed.",
       "paths": [],
       "registryKeys": [],
       "services": [],
