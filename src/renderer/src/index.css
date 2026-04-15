@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #090909;
+    color: #eeeeee;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@layer components {
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, #ff3333 0%, #ff6633 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Red gradient button */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 overflow-hidden;
+    background: linear-gradient(135deg, #ff3333 0%, #ff6633 100%);
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150;
+    color: #888;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+  }
+  .btn-ghost:hover {
+    color: #eee;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  .btn-ghost:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Category pills */
+  .pill {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold tracking-wide;
+  }
+  .pill-Core {
+    @apply pill;
+    background: rgba(255, 51, 51, 0.15);
+    color: #ff5555;
+    border: 1px solid rgba(255, 51, 51, 0.25);
+  }
+  .pill-Bundled {
+    @apply pill;
+    background: rgba(255, 102, 51, 0.15);
+    color: #ff7a50;
+    border: 1px solid rgba(255, 102, 51, 0.25);
+  }
+  .pill-Piriform {
+    @apply pill;
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+  }
+  .pill-Offer {
+    @apply pill;
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+  .pill-Telemetry {
+    @apply pill;
+    background: rgba(234, 179, 8, 0.15);
+    color: #facc15;
+    border: 1px solid rgba(234, 179, 8, 0.25);
+  }
+  .pill-PUP {
+    @apply pill;
+    background: rgba(236, 72, 153, 0.15);
+    color: #f472b6;
+    border: 1px solid rgba(236, 72, 153, 0.25);
+  }
+
+  /* Detection card */
+  .detection-card {
+    @apply relative rounded-xl p-4 cursor-pointer transition-all duration-150;
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .detection-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: #181818;
+  }
+  .detection-card.selected {
+    border-color: rgba(255, 51, 51, 0.4);
+    background: rgba(255, 51, 51, 0.05);
+    box-shadow: 0 0 0 1px rgba(255, 51, 51, 0.15);
+  }
+  .detection-card.detect-only {
+    opacity: 0.7;
+    cursor: default;
+  }
+  .detection-card.detect-only:hover {
+    background: #141414;
+    border-color: rgba(255, 255, 255, 0.07);
+  }
+
+  /* Log entry */
+  .log-entry {
+    @apply flex items-start gap-3 px-3 py-1.5 rounded-lg text-xs font-mono;
+  }
+  .log-success {
+    color: #4ade80;
+  }
+  .log-error {
+    color: #f87171;
+  }
+  .log-start {
+    color: #94a3b8;
+  }
+  .log-info {
+    color: #888;
+  }
+
+  /* Progress bar */
+  .progress-track {
+    @apply w-full h-1 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-300 ease-out;
+    background: linear-gradient(90deg, #ff3333, #ff6633);
+  }
+
+  /* Glowing orb */
+  .glow-orb {
+    @apply absolute rounded-full pointer-events-none;
+    filter: blur(80px);
+    opacity: 0.12;
+  }
+}
+
+/* Scan ring animation */
+@keyframes ring-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+@keyframes ring-pulse-2 {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.3;
+  }
+}
+
+@keyframes scan-sweep {
+  0% {
+    top: 0%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes stripe-move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 0;
+  }
+}
+
+.ring-1 {
+  animation: ring-pulse 2.5s ease-in-out infinite;
+}
+.ring-2 {
+  animation: ring-pulse-2 2.5s ease-in-out infinite 0.4s;
+}
+.ring-3 {
+  animation: ring-pulse-2 2.5s ease-in-out infinite 0.8s;
+}
+
+.progress-animated {
+  background: repeating-linear-gradient(
+    90deg,
+    #ff3333 0px,
+    #ff6633 20px,
+    #ff3333 40px
+  );
+  animation: stripe-move 0.8s linear infinite;
+  background-size: 40px 100%;
+}
+
+/* Screen transitions */
+.screen-enter {
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Checkbox */
+.custom-checkbox {
+  @apply w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-all duration-150;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+}
+.custom-checkbox.checked {
+  background: linear-gradient(135deg, #ff3333, #ff6633);
+  border-color: transparent;
+}

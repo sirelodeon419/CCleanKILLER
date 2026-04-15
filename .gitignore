@@ -1,3 +1,10 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+
 # OS
 Thumbs.db
 Desktop.ini
@@ -11,3 +18,11 @@ Desktop.ini
 
 # Logs
 *.log
+npm-debug.log*
+
+# Env
+.env
+.env.local
+
+# pnpm
+.npmrc

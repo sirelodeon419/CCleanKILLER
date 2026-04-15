@@ -1,0 +1,310 @@
+{
+  "version": "2.0.0",
+  "lastUpdated": "2026-04-15",
+  "rules": [
+    {
+      "id": "ccleaner",
+      "name": "CCleaner",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Core",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\CCleaner",
+        "%ProgramFiles(x86)%\\CCleaner",
+        "%ProgramData%\\CCleaner",
+        "%AppData%\\CCleaner",
+        "%LocalAppData%\\CCleaner"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform\\CCleaner",
+        "HKCU:\\SOFTWARE\\Piriform\\CCleaner",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Piriform\\CCleaner",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CCleaner",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CCleaner"
+      ],
+      "services": ["CCleanerPerformanceOptimizerService", "CCleanerUpdateService", "ccleaner_update"],
+      "scheduledTasks": ["CCleaner Update", "CCleanerSkipUAC*", "CCleaner*"],
+      "startupEntries": ["CCleaner Smart Cleaning", "CCleaner Monitor"],
+      "uninstallNames": ["CCleaner*"],
+      "processNames": ["CCleaner64", "CCleaner", "CCleanerPerformanceOptimizer"]
+    },
+    {
+      "id": "ccleaner_browser",
+      "name": "CCleaner Browser",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\CCleaner Browser",
+        "%ProgramFiles(x86)%\\CCleaner Browser",
+        "%LocalAppData%\\CCleaner Browser",
+        "%AppData%\\CCleaner Browser"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\CCleaner Browser",
+        "HKCU:\\SOFTWARE\\CCleaner Browser",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\CCleaner Browser",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CCleaner Browser",
+        "HKLM:\\SOFTWARE\\Clients\\StartMenuInternet\\CCleaner Browser"
+      ],
+      "services": ["CCleanerBrowserUpdate*"],
+      "scheduledTasks": ["CCleanerBrowser*", "CCleaner Browser*"],
+      "startupEntries": [],
+      "uninstallNames": ["CCleaner Browser*"],
+      "processNames": ["CCleanerBrowser"]
+    },
+    {
+      "id": "ccleaner_cloud",
+      "name": "CCleaner Cloud",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\CCleaner Cloud",
+        "%ProgramFiles(x86)%\\CCleaner Cloud",
+        "%ProgramData%\\CCleaner Cloud"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform\\CCleaner Cloud",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CCleaner Cloud"
+      ],
+      "services": ["CCleanerCloudAgent"],
+      "scheduledTasks": ["CCleaner Cloud*"],
+      "startupEntries": [],
+      "uninstallNames": ["CCleaner Cloud*"],
+      "processNames": ["CCleanerCloud"]
+    },
+    {
+      "id": "avast",
+      "name": "Avast Free Antivirus",
+      "vendor": "Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Avast Software",
+        "%ProgramFiles(x86)%\\Avast Software",
+        "%ProgramData%\\Avast Software",
+        "%AppData%\\Avast Software",
+        "%LocalAppData%\\Avast Software"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Avast Software",
+        "HKLM:\\SOFTWARE\\AVAST Software",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\AVAST Software",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Avast Antivirus"
+      ],
+      "services": ["avast! Antivirus", "AvastSvc", "aswbIDSAgent", "AvastWscReporter"],
+      "scheduledTasks": ["Avast *", "AvastUpdateTask*"],
+      "startupEntries": ["AvastUI.exe"],
+      "uninstallNames": ["Avast*Antivirus*", "Avast Free*"],
+      "processNames": ["AvastUI", "AvastSvc", "aswEngSrv", "aswidsagent"]
+    },
+    {
+      "id": "avg",
+      "name": "AVG Antivirus",
+      "vendor": "Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\AVG",
+        "%ProgramFiles(x86)%\\AVG",
+        "%ProgramData%\\AVG",
+        "%AppData%\\AVG",
+        "%LocalAppData%\\AVG"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\AVG",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\AVG",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AVG Antivirus"
+      ],
+      "services": ["avgwd", "AVGSvc"],
+      "scheduledTasks": ["AVG *", "AVGUpdateTask*"],
+      "startupEntries": ["AVGUI.exe"],
+      "uninstallNames": ["AVG*Antivirus*", "AVG Free*"],
+      "processNames": ["AVGUI", "AVGSvc"]
+    },
+    {
+      "id": "avast_browser",
+      "name": "Avast Secure Browser",
+      "vendor": "Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Avast Software\\Browser",
+        "%LocalAppData%\\AvastBrowser",
+        "%LocalAppData%\\Avast\\Browser"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Avast Secure Browser",
+        "HKLM:\\SOFTWARE\\Clients\\StartMenuInternet\\Avast Secure Browser"
+      ],
+      "services": ["AvastBrowserUpdate*"],
+      "scheduledTasks": ["AvastBrowser*", "Avast Secure Browser*"],
+      "startupEntries": [],
+      "uninstallNames": ["Avast Secure Browser*"],
+      "processNames": ["AvastBrowser"]
+    },
+    {
+      "id": "avg_browser",
+      "name": "AVG Secure Browser",
+      "vendor": "Gen Digital",
+      "category": "Bundled",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\AVG\\Browser",
+        "%LocalAppData%\\AVGBrowser",
+        "%LocalAppData%\\AVG\\Browser"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AVG Secure Browser",
+        "HKLM:\\SOFTWARE\\Clients\\StartMenuInternet\\AVG Secure Browser"
+      ],
+      "services": ["AVGBrowserUpdate*"],
+      "scheduledTasks": ["AVGBrowser*", "AVG Secure Browser*"],
+      "startupEntries": [],
+      "uninstallNames": ["AVG Secure Browser*"],
+      "processNames": ["AVGBrowser"]
+    },
+    {
+      "id": "recuva",
+      "name": "Recuva",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Piriform",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Recuva",
+        "%ProgramFiles(x86)%\\Recuva"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform\\Recuva",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Recuva"
+      ],
+      "services": [],
+      "scheduledTasks": [],
+      "startupEntries": [],
+      "uninstallNames": ["Recuva*"],
+      "processNames": ["Recuva"]
+    },
+    {
+      "id": "defraggler",
+      "name": "Defraggler",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Piriform",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Defraggler",
+        "%ProgramFiles(x86)%\\Defraggler"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform\\Defraggler",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Defraggler"
+      ],
+      "services": ["Defraggler"],
+      "scheduledTasks": ["Defraggler*"],
+      "startupEntries": [],
+      "uninstallNames": ["Defraggler*"],
+      "processNames": ["Defraggler"]
+    },
+    {
+      "id": "speccy",
+      "name": "Speccy",
+      "vendor": "Piriform / Gen Digital",
+      "category": "Piriform",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Speccy",
+        "%ProgramFiles(x86)%\\Speccy"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform\\Speccy",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Speccy"
+      ],
+      "services": [],
+      "scheduledTasks": [],
+      "startupEntries": [],
+      "uninstallNames": ["Speccy*"],
+      "processNames": ["Speccy"]
+    },
+    {
+      "id": "vweb",
+      "name": "VWeb / SweetIM",
+      "vendor": "Various",
+      "category": "PUP",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\VWeb",
+        "%ProgramFiles(x86)%\\VWeb",
+        "%AppData%\\VWeb",
+        "%LocalAppData%\\VWeb"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\VWeb",
+        "HKCU:\\SOFTWARE\\VWeb",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\VWeb",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VWeb"
+      ],
+      "services": ["VWebSvc"],
+      "scheduledTasks": ["VWeb*"],
+      "startupEntries": ["VWeb"],
+      "uninstallNames": ["VWeb*"],
+      "processNames": ["VWeb"]
+    },
+    {
+      "id": "gen_digital_telemetry",
+      "name": "Gen Digital / Piriform Telemetry",
+      "vendor": "Gen Digital",
+      "category": "Telemetry",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramData%\\Piriform",
+        "%AppData%\\Piriform",
+        "%ProgramData%\\Gen Digital"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Piriform",
+        "HKCU:\\SOFTWARE\\Piriform",
+        "HKLM:\\SOFTWARE\\WOW6432Node\\Piriform"
+      ],
+      "services": [],
+      "scheduledTasks": [],
+      "startupEntries": [],
+      "uninstallNames": [],
+      "processNames": []
+    },
+    {
+      "id": "google_toolbar",
+      "name": "Google Toolbar",
+      "vendor": "Google",
+      "category": "Offer",
+      "detectOnly": false,
+      "paths": [
+        "%ProgramFiles%\\Google\\Google Toolbar",
+        "%ProgramFiles(x86)%\\Google\\Google Toolbar"
+      ],
+      "registryKeys": [
+        "HKLM:\\SOFTWARE\\Google\\Google Toolbar",
+        "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{18455581-E099-4BA8-BC6B-F34B2F06600C}"
+      ],
+      "services": ["GoogleToolbarNotifier"],
+      "scheduledTasks": [],
+      "startupEntries": ["swg"],
+      "uninstallNames": ["Google Toolbar*"],
+      "processNames": ["GoogleToolbarNotifier"]
+    },
+    {
+      "id": "chrome_bundled",
+      "name": "Google Chrome (CCleaner Offer)",
+      "vendor": "Google",
+      "category": "Offer",
+      "detectOnly": true,
+      "note": "Chrome may have been installed via a CCleaner offer. Flagged for awareness only — not auto-removed.",
+      "paths": [],
+      "registryKeys": [],
+      "services": [],
+      "scheduledTasks": [],
+      "startupEntries": [],
+      "uninstallNames": [],
+      "processNames": []
+    }
+  ]
+}

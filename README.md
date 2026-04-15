@@ -1,76 +1,119 @@
-# 🔥 CCleanKILLER
+# CCleanKILLER
 
-**Nuke the bloatware.** A thorough removal tool for CCleaner and all the junk it brings along.
+**Nuke the bloatware.** A thorough Windows removal tool for CCleaner and everything it drags along — services, registry keys, scheduled tasks, startup entries, and bundled software.
+
+Built with Electron + React + TypeScript. No HTTP bridge, no open ports — direct IPC. Packages to a portable `.exe`.
+
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+---
 
 ## What It Removes
 
 | Category | Software |
 |----------|----------|
-| **Core** | CCleaner (Free/Pro), services, tasks, telemetry |
-| **Bundled** | CCleaner Browser, CCleaner Cloud, Avast Antivirus, AVG Antivirus, Avast Secure Browser, AVG Secure Browser |
+| **Core** | CCleaner (all editions), update services, performance optimizer |
+| **Bundled** | CCleaner Browser, CCleaner Cloud, Avast Free Antivirus, AVG Antivirus, Avast Secure Browser, AVG Secure Browser |
 | **Piriform** | Recuva, Defraggler, Speccy |
-| **Offers** | Google Toolbar (flags Chrome bundle for awareness) |
-| **Telemetry** | Piriform/Gen Digital telemetry & tracking data |
+| **PUPs** | VWeb / SweetIM |
+| **Offers** | Google Toolbar (Chrome bundle is flagged, not auto-removed) |
+| **Telemetry** | Gen Digital / Piriform telemetry data & tracking registry keys |
 
-## For Each Target, It Removes:
-- 📁 Installation files & leftover folders
-- 🔑 Registry keys (HKLM, HKCU, WOW6432Node)
-- ⚙️ Windows services
-- ⏰ Scheduled tasks
-- 🚀 Startup entries
-- 📦 Runs native uninstallers silently when available
+For each target it removes:
+- Files and leftover folders (with force-takeown fallback for locked paths)
+- Registry keys (HKLM, HKCU, WOW6432Node)
+- Windows services (stop → disable → delete)
+- Scheduled tasks
+- Startup entries
+- Runs native uninstallers silently where available
 
-## How to Use
+---
 
-### Quick Start (GUI)
-1. **Right-click** `launcher.bat` → **Run as Administrator**
-2. The UI opens in your browser
-3. Click **Scan Now** to detect bloatware
-4. Review findings, select what to remove
-5. Click **Remove Selected** and confirm
+## Usage
 
-### Preview Mode
-Just open `index.html` directly in a browser to see the UI with demo data (no actual scanning/removal).
+### Download
 
-### PowerShell Only (Advanced)
-```powershell
-# Scan only
-powershell -ExecutionPolicy Bypass -File scanner.ps1 -Action scan
+Grab the latest `CCleanKILLER-portable.exe` from [Releases](../../releases) — no installation required.
 
-# Remove specific targets
-powershell -ExecutionPolicy Bypass -File scanner.ps1 -Action remove -Targets ccleaner,avast,telemetry
+Run as Administrator (UAC prompt fires automatically on launch).
+
+### From Source
+
+```bash
+pnpm install
+pnpm run dev       # dev mode with hot reload
+pnpm run dist:portable  # build portable .exe → dist/
+pnpm run dist:nsis      # build NSIS installer → dist/
 ```
 
-## Target IDs
-Use these IDs with the PowerShell script:
-- `ccleaner` — CCleaner core
-- `ccleaner_browser` — CCleaner Browser
-- `ccleaner_cloud` — CCleaner Cloud
-- `avast` — Avast Free Antivirus
-- `avg` — AVG Antivirus
-- `avast_browser` — Avast Secure Browser
-- `avg_browser` — AVG Secure Browser
-- `recuva` — Recuva
-- `defraggler` — Defraggler
-- `speccy` — Speccy
-- `google_toolbar` — Google Toolbar
-- `telemetry` — Piriform/Gen Digital telemetry
+**Requirements:** Node.js 18+, pnpm, Windows 10/11
+
+---
 
 ## Architecture
+
 ```
 CCleanKILLER/
-├── launcher.bat     # Admin launcher (entry point)
-├── server.ps1       # Local HTTP bridge (PS → UI)
-├── scanner.ps1      # Detection & removal engine
-├── index.html       # UI structure
-├── style.css        # UI styling
-└── app.js           # UI logic
+├── src/
+│   ├── main/           # Electron main process
+│   │   ├── index.ts    # Window creation, UAC elevation
+│   │   ├── ipc.ts      # IPC handlers (scan, remove, window controls)
+│   │   ├── scanner.ts  # PowerShell spawner + output parser
+│   │   └── admin.ts    # Admin check + relaunch-elevated
+│   ├── preload/
+│   │   └── index.ts    # Context bridge (exposes API to renderer)
+│   └── renderer/
+│       └── src/
+│           ├── App.tsx
+│           ├── components/
+│           │   ├── TitleBar.tsx
+│           │   ├── ScanScreen.tsx
+│           │   ├── ScanningScreen.tsx
+│           │   ├── ResultsScreen.tsx
+│           │   ├── DetectionCard.tsx
+│           │   ├── RemovalScreen.tsx  ← streams live log from PS1
+│           │   └── CompleteScreen.tsx
+│           └── types/index.ts
+├── resources/
+│   ├── scanner.ps1     # Detection & removal engine
+│   └── rules.json      # Community-editable detection rules
+└── electron-builder.yml
 ```
 
-## Requirements
-- Windows 10/11
-- Administrator privileges (for services, registry, and file removal)
-- PowerShell 5.1+
+**Key design decisions:**
+- No HTTP bridge — Node.js main process spawns PowerShell directly via `child_process`
+- `rules.json` is the single source of truth for all detection targets — add a new target with no code changes
+- Removal is streamed line-by-line via IPC for real-time log display
+- `requireAdministrator` manifest embedded in packaged `.exe`
 
-## ⚠️ Disclaimer
-This tool is not affiliated with Piriform, Avast, AVG, or Gen Digital. Use at your own risk. Always back up your system before removing software.
+---
+
+## Adding Detection Rules
+
+Edit `resources/rules.json` to add a new target:
+
+```json
+{
+  "id": "my_bloatware",
+  "name": "My Bloatware",
+  "vendor": "Some Corp",
+  "category": "PUP",
+  "detectOnly": false,
+  "paths": ["%ProgramFiles%\\MyBloatware"],
+  "registryKeys": ["HKLM:\\SOFTWARE\\MyBloatware"],
+  "services": ["MyBloatwareSvc"],
+  "scheduledTasks": ["MyBloatware*"],
+  "startupEntries": [],
+  "uninstallNames": ["MyBloatware*"],
+  "processNames": ["mybloatware"]
+}
+```
+
+PRs adding new rules are welcome.
+
+---
+
+## Disclaimer
+
+Not affiliated with Piriform, Avast, AVG, or Gen Digital. Use at your own risk. Always create a system restore point before removing software.

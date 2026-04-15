@@ -1,0 +1,36 @@
+appId: com.sirelodeon419.ccleankiller
+productName: CCleanKILLER
+copyright: Copyright © 2026 sirelodeon419
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - out/**/*
+
+# Bundle scanner.ps1 + rules.json alongside the executable
+extraResources:
+  - from: resources/scanner.ps1
+    to: scanner.ps1
+  - from: resources/rules.json
+    to: rules.json
+
+win:
+  target:
+    - target: portable
+      arch: [x64]
+    - target: nsis
+      arch: [x64]
+  icon: build/icon.ico
+  requestedExecutionLevel: requireAdministrator
+
+portable:
+  artifactName: CCleanKILLER-${version}-portable.exe
+
+nsis:
+  oneClick: true
+  perMachine: true
+  allowElevation: true
+  deleteAppDataOnUninstall: false
+  artifactName: CCleanKILLER-${version}-setup.exe

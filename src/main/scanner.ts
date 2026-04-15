@@ -1,0 +1,166 @@
+import { spawn } from 'child_process'
+import { join } from 'path'
+import { is } from '@electron-toolkit/utils'
+// Shared types (duplicated here to avoid cross-boundary imports)
+interface ScanResult {
+  Id: string
+  Name: string
+  Category: string
+  DetectOnly: boolean
+  Note?: string
+  IsDetected: boolean
+  TotalSizeBytes: number
+  FoundPaths: string[]
+  FoundRegistryKeys: string[]
+  FoundServices: unknown[]
+  FoundScheduledTasks: unknown[]
+  FoundStartupEntries: unknown[]
+  FoundUninstallEntries: unknown[]
+}
+
+interface LogEntry {
+  target: string
+  action: string
+  message: string
+}
+
+function getScannerPath(): string {
+  if (is.dev) {
+    return join(process.cwd(), 'resources', 'scanner.ps1')
+  }
+  return join(process.resourcesPath, 'scanner.ps1')
+}
+
+function getRulesPath(): string {
+  if (is.dev) {
+    return join(process.cwd(), 'resources', 'rules.json')
+  }
+  return join(process.resourcesPath, 'rules.json')
+}
+
+export function runScan(
+  onProgress: (step: string, index: number, total: number) => void
+): Promise<ScanResult[]> {
+  return new Promise((resolve, reject) => {
+    const scannerPath = getScannerPath()
+    const rulesPath = getRulesPath()
+
+    const ps = spawn('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      scannerPath,
+      '-Action',
+      'scan',
+      '-RulesPath',
+      rulesPath
+    ])
+
+    let stdout = ''
+    let stderr = ''
+
+    ps.stdout.on('data', (data: Buffer) => {
+      const chunk = data.toString()
+      // Progress lines: PROGRESS:index:total:name
+      chunk.split('\n').forEach((line) => {
+        if (line.startsWith('PROGRESS:')) {
+          const parts = line.trim().split(':')
+          if (parts.length >= 4) {
+            onProgress(parts[3], parseInt(parts[1]), parseInt(parts[2]))
+          }
+        } else {
+          stdout += line + '\n'
+        }
+      })
+    })
+
+    ps.stderr.on('data', (data: Buffer) => {
+      stderr += data.toString()
+    })
+
+    ps.on('close', (code) => {
+      const trimmed = stdout.trim()
+      if (!trimmed) {
+        reject(new Error(`Scanner produced no output. Exit: ${code}. Stderr: ${stderr}`))
+        return
+      }
+      try {
+        const results = JSON.parse(trimmed)
+        resolve(Array.isArray(results) ? results : [])
+      } catch (e) {
+        reject(new Error(`Failed to parse scan results: ${e}\nOutput: ${trimmed.slice(0, 500)}`))
+      }
+    })
+
+    ps.on('error', (err) => {
+      reject(new Error(`Failed to start scanner: ${err.message}`))
+    })
+  })
+}
+
+export function runRemoval(
+  targets: string[],
+  onLog: (entry: LogEntry) => void,
+  onDone: () => void
+): void {
+  const scannerPath = getScannerPath()
+  const rulesPath = getRulesPath()
+
+  const ps = spawn('powershell.exe', [
+    '-NoProfile',
+    '-NonInteractive',
+    '-ExecutionPolicy',
+    'Bypass',
+    '-File',
+    scannerPath,
+    '-Action',
+    'remove',
+    '-RulesPath',
+    rulesPath,
+    '-Targets',
+    targets.join(',')
+  ])
+
+  let buffer = ''
+
+  ps.stdout.on('data', (data: Buffer) => {
+    buffer += data.toString()
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (!trimmed) continue
+      try {
+        const entry = JSON.parse(trimmed) as LogEntry
+        onLog(entry)
+      } catch {
+        // Non-JSON line — ignore
+      }
+    }
+  })
+
+  ps.on('close', () => {
+    // Flush any remaining buffer
+    if (buffer.trim()) {
+      try {
+        const entry = JSON.parse(buffer.trim()) as LogEntry
+        onLog(entry)
+      } catch {
+        // ignore
+      }
+    }
+    onDone()
+  })
+
+  ps.on('error', (err) => {
+    onLog({
+      target: 'system',
+      action: 'error',
+      message: `Failed to start removal engine: ${err.message}`
+    })
+    onDone()
+  })
+}
