@@ -1,5 +1,5 @@
-#Requires -RunAsAdministrator
 # CCleanKILLER v2 — Scanner & Removal Engine
+# Note: Admin is required for removal. Scan works without elevation.
 # Data-driven: loads detection rules from rules.json
 
 param(
@@ -189,8 +189,7 @@ function Invoke-Scan {
 function Write-Log {
     param([string]$Target, [string]$Action, [string]$Message)
     $entry = [ordered]@{ target = $Target; action = $Action; message = $Message }
-    Write-Output ($entry | ConvertTo-Json -Compress)
-    [Console]::Out.Flush()
+    [Console]::WriteLine(($entry | ConvertTo-Json -Compress))
 }
 
 function Invoke-Remove {

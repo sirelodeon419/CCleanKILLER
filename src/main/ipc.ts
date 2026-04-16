@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow } from 'electron'
 import { runScan, runRemoval } from './scanner'
 import { checkAdmin } from './admin'
 
-export function registerIpcHandlers(): void {
+export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void {
   // Window controls
   ipcMain.on('window:minimize', () => {
     BrowserWindow.getFocusedWindow()?.minimize()
@@ -27,11 +27,10 @@ export function registerIpcHandlers(): void {
   })
 
   // Scan
-  ipcMain.handle('scanner:scan', async (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender)
+  ipcMain.handle('scanner:scan', async () => {
     try {
       const results = await runScan((step, index, total) => {
-        win?.webContents.send('scan:progress', { step, index, total })
+        getWindow()?.webContents.send('scan:progress', { step, index, total })
       })
       return { ok: true, results }
     } catch (err) {
@@ -40,16 +39,15 @@ export function registerIpcHandlers(): void {
   })
 
   // Remove
-  ipcMain.handle('scanner:remove', async (event, targets: string[]) => {
-    const win = BrowserWindow.fromWebContents(event.sender)
+  ipcMain.handle('scanner:remove', async (_event, targets: string[]) => {
     return new Promise<{ ok: boolean; error?: string }>((resolve) => {
       runRemoval(
         targets,
         (entry) => {
-          win?.webContents.send('removal:log', entry)
+          getWindow()?.webContents.send('removal:log', entry)
         },
         () => {
-          win?.webContents.send('removal:complete')
+          getWindow()?.webContents.send('removal:complete')
           resolve({ ok: true })
         }
       )

@@ -11,13 +11,16 @@ export async function checkAdmin(): Promise<boolean> {
 }
 
 export function relaunchAsAdmin(): void {
-  const execPath = process.execPath
+  const execPath = process.execPath.replace(/'/g, "''")
   const args = process.argv.slice(1)
-  const argStr = args.map((a) => `"${a}"`).join(' ')
+  const argList =
+    args.length > 0
+      ? `-ArgumentList ${args.map((a) => `'${a.replace(/'/g, "''")}'`).join(',')}`
+      : ''
 
   spawn(
     'powershell.exe',
-    ['-Command', `Start-Process -FilePath "${execPath}" -ArgumentList "${argStr}" -Verb RunAs`],
+    ['-Command', `Start-Process -FilePath '${execPath}' ${argList} -Verb RunAs`],
     { detached: true, stdio: 'ignore' }
   ).unref()
 

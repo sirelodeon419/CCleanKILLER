@@ -42,8 +42,8 @@ function createWindow(): void {
 }
 
 app.whenReady().then(async () => {
-  // On Windows, check for admin and prompt to elevate
-  if (process.platform === 'win32') {
+  // On Windows, check for admin and prompt to elevate (skipped in dev — run terminal as admin if needed)
+  if (process.platform === 'win32' && !is.dev) {
     const isAdmin = await checkAdmin()
     if (!isAdmin) {
       const { dialog } = await import('electron')
@@ -62,7 +62,7 @@ app.whenReady().then(async () => {
   }
 
   createWindow()
-  registerIpcHandlers()
+  registerIpcHandlers(() => mainWindow)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
