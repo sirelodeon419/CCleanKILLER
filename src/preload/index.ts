@@ -31,7 +31,10 @@ const api = {
 
   removeAllListeners: (channel: string) => {
     ipcRenderer.removeAllListeners(channel)
-  }
+  },
+
+  exportLog: (content: string): Promise<{ ok: boolean; filePath?: string }> =>
+    ipcRenderer.invoke('log:export', content)
 }
 
 contextBridge.exposeInMainWorld('api', api)

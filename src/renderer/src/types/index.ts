@@ -78,6 +78,7 @@ declare global {
       onRemovalLog: (cb: (entry: LogEntry) => void) => void
       onRemovalComplete: (cb: () => void) => void
       removeAllListeners: (channel: string) => void
+      exportLog: (content: string) => Promise<{ ok: boolean; filePath?: string }>
     }
   }
 }

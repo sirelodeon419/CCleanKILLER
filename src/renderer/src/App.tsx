@@ -79,6 +79,7 @@ export default function App() {
             removedCount={removedCount}
             freedBytes={freedBytes}
             onReset={handleReset}
+            log={removalLog}
           />
         )}
       </main>

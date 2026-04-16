@@ -195,6 +195,14 @@ function Write-Log {
 function Invoke-Remove {
     param([string[]]$TargetIds)
 
+    # Create restore point before making any changes
+    try {
+        $null = Checkpoint-Computer -Description "CCleanKILLER — pre-removal snapshot" -RestorePointType "MODIFY_SETTINGS" -ErrorAction Stop
+        Write-Log "system" "info" "System restore point created successfully"
+    } catch {
+        Write-Log "system" "info" "Restore point skipped (may already exist within 24h window)"
+    }
+
     foreach ($targetId in $TargetIds) {
         $rule = $rules | Where-Object { $_.id -eq $targetId }
         if (-not $rule) {

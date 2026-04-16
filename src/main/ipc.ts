@@ -38,6 +38,21 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
     }
   })
 
+  // Log export
+  ipcMain.handle('log:export', async (_event, content: string) => {
+    const { dialog } = await import('electron')
+    const { writeFile } = await import('fs/promises')
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
+    const { filePath, canceled } = await dialog.showSaveDialog({
+      title: 'Export Removal Log',
+      defaultPath: `ccleankiller-log-${timestamp}.txt`,
+      filters: [{ name: 'Text Files', extensions: ['txt'] }]
+    })
+    if (canceled || !filePath) return { ok: false }
+    await writeFile(filePath, content, 'utf-8')
+    return { ok: true, filePath }
+  })
+
   // Remove
   ipcMain.handle('scanner:remove', async (_event, targets: string[]) => {
     return new Promise<{ ok: boolean; error?: string }>((resolve) => {
