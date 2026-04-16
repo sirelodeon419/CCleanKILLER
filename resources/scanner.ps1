@@ -292,9 +292,16 @@ function Invoke-Remove {
                         $cmd = $props.QuietUninstallString
                         if (-not $cmd) { $cmd = $props.UninstallString }
                         if ($cmd) {
-                            # Append silent flags if missing
-                            if ($cmd -notmatch '/S|/silent|/quiet|--uninstall|-uninstall') {
-                                $cmd = $cmd.TrimEnd() + ' /S'
+                            # Append silent flags based on installer type
+                            $isMsi = $cmd -match '(?i)msiexec'
+                            $hasQuietFlag = $cmd -match '(?i)/S\b|/silent|/quiet|/VERYSILENT|/SUPPRESSMSGBOXES|--uninstall|-uninstall|/qn|/qb'
+                            if (-not $hasQuietFlag) {
+                                if ($isMsi) {
+                                    $cmd = $cmd.TrimEnd() + ' /qn /norestart'
+                                } else {
+                                    # Try InnoSetup-style first (most Piriform tools use InnoSetup)
+                                    $cmd = $cmd.TrimEnd() + ' /VERYSILENT /SUPPRESSMSGBOXES /NORESTART'
+                                }
                             }
                             Write-Log $targetId "uninstall_attempt" "Running uninstaller for $($props.DisplayName)"
                             try {
