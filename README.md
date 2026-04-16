@@ -114,6 +114,18 @@ PRs adding new rules are welcome.
 
 ---
 
+## Status
+
+**v2.0.0 — Tested and working on Windows 11** (April 2026)
+
+- Full scan + removal verified end-to-end on a live system with CCleaner 7 installed
+- 2 targets detected and removed, 6.9 MB freed
+- Admin elevation via NSIS installer confirmed working (`requireAdministrator` manifest)
+- Live removal log streams correctly to the UI
+- Clean bill of health post-removal (no registry keys, folders, or services remaining)
+
+---
+
 ## Disclaimer
 
 Not affiliated with Piriform, Avast, AVG, or Gen Digital. Use at your own risk. Always create a system restore point before removing software.
