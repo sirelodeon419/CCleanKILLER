@@ -272,7 +272,9 @@ function Invoke-Remove {
                     try {
                         Remove-ItemProperty -Path $runPath -Name $startupName -ErrorAction Stop
                         Write-Log $targetId "startup_removed" "Removed startup: $startupName"
-                    } catch {}
+                    } catch {
+                        Write-Log $targetId "error" "Could not remove startup entry '$startupName' from ${runPath}: $_"
+                    }
                 }
             }
         }

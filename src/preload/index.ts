@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { ScanResult, LogEntry } from '../shared/types'
 
 const api = {
   // Window controls
@@ -10,7 +11,7 @@ const api = {
   isAdmin: (): Promise<boolean> => ipcRenderer.invoke('app:is-admin'),
 
   // Scanner
-  scan: (): Promise<{ ok: boolean; results?: unknown[]; error?: string }> =>
+  scan: (): Promise<{ ok: boolean; results?: ScanResult[]; error?: string }> =>
     ipcRenderer.invoke('scanner:scan'),
 
   remove: (targets: string[]): Promise<{ ok: boolean; error?: string }> =>
@@ -21,7 +22,7 @@ const api = {
     ipcRenderer.on('scan:progress', (_event, data) => cb(data))
   },
 
-  onRemovalLog: (cb: (entry: unknown) => void) => {
+  onRemovalLog: (cb: (entry: LogEntry) => void) => {
     ipcRenderer.on('removal:log', (_event, entry) => cb(entry))
   },
 

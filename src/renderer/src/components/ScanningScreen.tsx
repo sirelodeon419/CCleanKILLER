@@ -29,7 +29,7 @@ export default function ScanningScreen({ onComplete }: Props) {
     started.current = true
 
     // Register PS1 progress callback
-    window.api.onScanProgress(({ step, index, total }) => {
+    window.api.onScanProgress(({ index, total }) => {
       setStepIndex(Math.min(index, SCAN_STEPS.length - 1))
       setProgress(Math.round((index / total) * 90))
     })
@@ -57,7 +57,7 @@ export default function ScanningScreen({ onComplete }: Props) {
         setStepIndex(SCAN_STEPS.length - 1)
 
         setTimeout(() => {
-          onComplete(results as ScanResult[])
+          onComplete(results)
         }, 400)
       })
       .catch((err) => {
@@ -75,7 +75,15 @@ export default function ScanningScreen({ onComplete }: Props) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 screen-enter">
         <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/25 flex items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="#f87171"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
             <path d="M10 6v5M10 14h.01M3 10a7 7 0 1 0 14 0 7 7 0 0 0-14 0Z" />
           </svg>
         </div>
@@ -91,7 +99,10 @@ export default function ScanningScreen({ onComplete }: Props) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-8 screen-enter">
       {/* Scanner animation */}
-      <div className="relative w-48 h-1 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.04)' }}>
+      <div
+        className="relative w-48 h-1 overflow-hidden rounded-full"
+        style={{ background: 'rgba(255,255,255,0.04)' }}
+      >
         <div
           className="absolute top-0 left-0 h-full rounded-full transition-all duration-300"
           style={{

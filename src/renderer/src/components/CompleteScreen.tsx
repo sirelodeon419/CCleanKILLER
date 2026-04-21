@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatBytes } from '../lib/format'
 import type { LogEntry, ScanResult } from '../types'
 
 interface Props {
@@ -6,14 +7,6 @@ interface Props {
   freedBytes: number
   onReset: () => void
   log: LogEntry[]
-}
-
-function formatBytes(bytes: number): string {
-  if (!bytes || bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 
 const VERIFY_CATEGORIES = new Set(['Core', 'Bundled', 'Piriform', 'Telemetry'])
@@ -52,7 +45,7 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
         setVerifyStatus('idle')
         return
       }
-      const remnants = (result.results as ScanResult[]).filter(
+      const remnants = result.results.filter(
         (r) => VERIFY_CATEGORIES.has(r.Category) && r.IsDetected
       )
       setStillDetected(remnants)
@@ -97,7 +90,10 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
       </div>
 
       {/* Stats */}
-      <div className="flex items-stretch gap-px rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div
+        className="flex items-stretch gap-px rounded-2xl overflow-hidden"
+        style={{ border: '1px solid rgba(255,255,255,0.07)' }}
+      >
         <div className="px-8 py-4 text-center" style={{ background: '#141414' }}>
           <p className="text-2xl font-black text-gradient">{removedCount}</p>
           <p className="text-text-muted text-xs mt-0.5 font-medium">Items Removed</p>
@@ -112,28 +108,50 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
       {/* CTA row */}
       <div className="flex gap-3 mt-2 flex-wrap justify-center">
         <button className="btn-ghost" onClick={onReset}>
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 14 14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          >
             <path d="M12 7A5 5 0 1 1 7 2M7 2l3 0M7 2l0 3" />
           </svg>
           Scan Again
         </button>
 
         {/* Export Log button */}
-        <button
-          className="btn-ghost"
-          onClick={handleExportLog}
-          disabled={exportStatus === 'saved'}
-        >
+        <button className="btn-ghost" onClick={handleExportLog} disabled={exportStatus === 'saved'}>
           {exportStatus === 'saved' ? (
             <>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="#22c55e"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M2 7l4 4 6-6" />
               </svg>
               <span style={{ color: '#22c55e' }}>Saved!</span>
             </>
           ) : (
             <>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M7 2v7M4 6l3 3 3-3M2 10v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1" />
               </svg>
               Export Log
@@ -149,14 +167,31 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
         >
           {verifyStatus === 'scanning' ? (
             <>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              >
                 <circle cx="7" cy="7" r="5" strokeDasharray="8 8" />
               </svg>
               Scanning…
             </>
           ) : (
             <>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 14 14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <circle cx="6" cy="6" r="4" />
                 <path d="M9 9l3 3" />
               </svg>
@@ -180,7 +215,16 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
             color: '#22c55e'
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M2 7l4 4 6-6" />
           </svg>
           System is clean — no CCleaner remnants detected
@@ -198,7 +242,16 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
           }}
         >
           <div className="flex items-center gap-2 font-medium" style={{ color: '#ef4444' }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M7 2L12 11H2L7 2z" />
               <path d="M7 6v2.5M7 10h.01" />
             </svg>
@@ -206,7 +259,9 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
           </div>
           <ul className="pl-4 space-y-0.5" style={{ color: '#f87171' }}>
             {stillDetected.map((r) => (
-              <li key={r.Id} className="text-xs">• {r.Name}</li>
+              <li key={r.Id} className="text-xs">
+                • {r.Name}
+              </li>
             ))}
           </ul>
           <button
