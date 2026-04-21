@@ -1,28 +1,7 @@
 import { spawn } from 'child_process'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
-// Shared types (duplicated here to avoid cross-boundary imports)
-interface ScanResult {
-  Id: string
-  Name: string
-  Category: string
-  DetectOnly: boolean
-  Note?: string
-  IsDetected: boolean
-  TotalSizeBytes: number
-  FoundPaths: string[]
-  FoundRegistryKeys: string[]
-  FoundServices: unknown[]
-  FoundScheduledTasks: unknown[]
-  FoundStartupEntries: unknown[]
-  FoundUninstallEntries: unknown[]
-}
-
-interface LogEntry {
-  target: string
-  action: string
-  message: string
-}
+import type { ScanResult, LogEntry } from '../shared/types'
 
 function getScannerPath(): string {
   if (is.dev) {

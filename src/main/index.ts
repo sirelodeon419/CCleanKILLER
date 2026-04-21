@@ -50,7 +50,8 @@ app.whenReady().then(async () => {
       const result = await dialog.showMessageBox({
         type: 'warning',
         title: 'CCleanKILLER — Administrator Required',
-        message: 'CCleanKILLER requires administrator privileges to remove software and modify the registry.',
+        message:
+          'CCleanKILLER requires administrator privileges to remove software and modify the registry.',
         buttons: ['Relaunch as Administrator', 'Continue Anyway'],
         defaultId: 0
       })

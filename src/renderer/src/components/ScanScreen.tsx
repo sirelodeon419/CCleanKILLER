@@ -12,8 +12,13 @@ export default function ScanScreen({ onStart }: Props) {
         <div className="ring-1 absolute w-28 h-28 rounded-full border border-red-500/25" />
 
         {/* Center icon */}
-        <div className="relative z-10 w-16 h-16 rounded-2xl flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, rgba(255,51,51,0.15), rgba(255,102,51,0.15))', border: '1px solid rgba(255,51,51,0.2)' }}>
+        <div
+          className="relative z-10 w-16 h-16 rounded-2xl flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,51,51,0.15), rgba(255,102,51,0.15))',
+            border: '1px solid rgba(255,51,51,0.2)'
+          }}
+        >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <circle cx="12" cy="12" r="8" stroke="url(#sg)" strokeWidth="1.75" />
             <path d="M18 18L24 24" stroke="url(#sg)" strokeWidth="1.75" strokeLinecap="round" />
@@ -48,9 +53,7 @@ export default function ScanScreen({ onStart }: Props) {
       </button>
 
       {/* Footer note */}
-      <p className="text-text-muted text-xs mt-8">
-        Requires Administrator — changes are permanent
-      </p>
+      <p className="text-text-muted text-xs mt-8">Requires Administrator — changes are permanent</p>
     </div>
   )
 }
