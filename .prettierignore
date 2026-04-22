@@ -1,4 +1,7 @@
-dist/
 out/
+dist/
 node_modules/
+pnpm-lock.yaml
 *.ps1
+*.ico
+*.png

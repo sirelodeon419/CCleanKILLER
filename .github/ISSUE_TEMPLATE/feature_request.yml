@@ -1,0 +1,58 @@
+name: Feature Request
+description: Suggest a new detection rule or tool improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea? Great. Keep it focused — small, concrete suggestions get implemented faster.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: What kind of request is this?
+      options:
+        - New detection rule (add a bloatware target)
+        - Improve existing detection (missed paths / registry keys)
+        - UI / UX improvement
+        - Build / packaging improvement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the feature
+      description: What should CCleanKILLER do that it doesn't do today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: rule-details
+    attributes:
+      label: Rule details (for new detection rules)
+      description: |
+        If you're requesting a new bloatware target, provide as much detail as possible.
+        You can paste a partial `rules.json` entry.
+      placeholder: |
+        Software name: MyBloatware 2.0
+        Vendor: SomeCorp
+
+        Paths:
+          - %ProgramFiles%\MyBloatware
+          - %AppData%\MyBloatware
+
+        Registry keys:
+          - HKLM:\SOFTWARE\MyBloatware
+          - HKCU:\SOFTWARE\MyBloatware
+
+        Services: MyBloatwareSvc
+        Scheduled tasks: MyBloatware*
+        Uninstall display name: MyBloatware*
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why is this useful?
+      description: Briefly explain why this matters to users.
