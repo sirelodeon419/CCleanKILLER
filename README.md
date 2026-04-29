@@ -36,6 +36,8 @@ For each target it removes:
 
 Grab the latest `CCleanKILLER-portable.exe` from [Releases](../../releases) — no installation required.
 
+Public landing page for indexing and sharing: [sirelodeon419.github.io/CCleanKILLER](https://sirelodeon419.github.io/CCleanKILLER/)
+
 Run as Administrator (UAC prompt fires automatically on launch).
 
 ### From Source

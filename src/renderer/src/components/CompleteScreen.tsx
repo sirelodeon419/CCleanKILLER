@@ -7,13 +7,15 @@ interface Props {
   freedBytes: number
   onReset: () => void
   log: LogEntry[]
+  backupPath: string | null
 }
 
 const VERIFY_CATEGORIES = new Set(['Core', 'Bundled', 'Piriform', 'Telemetry'])
 
-export default function CompleteScreen({ removedCount, freedBytes, onReset, log }: Props) {
+export default function CompleteScreen({ removedCount, freedBytes, onReset, log, backupPath }: Props) {
   const [exportStatus, setExportStatus] = useState<'idle' | 'saved' | 'error'>('idle')
   const [verifyStatus, setVerifyStatus] = useState<'idle' | 'scanning' | 'clean' | 'found'>('idle')
+  const [restoreStatus, setRestoreStatus] = useState<'idle' | 'restoring' | 'done' | 'error'>('idle')
   const [stillDetected, setStillDetected] = useState<ScanResult[]>([])
 
   async function handleExportLog() {
@@ -53,6 +55,18 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
     } catch {
       setVerifyStatus('idle')
     }
+  }
+
+  async function handleRestore() {
+    if (!backupPath) return
+    setRestoreStatus('restoring')
+    try {
+      const result = await window.api.restore(backupPath)
+      setRestoreStatus(result.ok ? 'done' : 'error')
+    } catch {
+      setRestoreStatus('error')
+    }
+    setTimeout(() => setRestoreStatus('idle'), 4000)
   }
 
   return (
@@ -199,6 +213,46 @@ export default function CompleteScreen({ removedCount, freedBytes, onReset, log 
             </>
           )}
         </button>
+
+        {backupPath && (
+          <button
+            className="btn-ghost"
+            onClick={handleRestore}
+            disabled={restoreStatus === 'restoring' || restoreStatus === 'done'}
+            title={`Restore from: ${backupPath}`}
+          >
+            {restoreStatus === 'restoring' ? (
+              <>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                  style={{ animation: 'spin 1.5s linear infinite' }}>
+                  <path d="M7 2a5 5 0 1 0 4.33 2.5" />
+                </svg>
+                Restoring…
+              </>
+            ) : restoreStatus === 'done' ? (
+              <>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 7l4 4 6-6" />
+                </svg>
+                <span style={{ color: '#22c55e' }}>Restored!</span>
+              </>
+            ) : restoreStatus === 'error' ? (
+              <>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#f87171" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M2 2l10 10M12 2L2 12" />
+                </svg>
+                <span style={{ color: '#f87171' }}>Failed</span>
+              </>
+            ) : (
+              <>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 7a5 5 0 1 1 5 5M7 2l-3 3 3 3" />
+                </svg>
+                Undo Registry
+              </>
+            )}
+          </button>
+        )}
 
         <button className="btn-primary" onClick={() => window.api.close()}>
           Close

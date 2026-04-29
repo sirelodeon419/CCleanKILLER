@@ -35,7 +35,10 @@ const api = {
   },
 
   exportLog: (content: string): Promise<{ ok: boolean; filePath?: string }> =>
-    ipcRenderer.invoke('log:export', content)
+    ipcRenderer.invoke('log:export', content),
+
+  restore: (backupPath: string): Promise<{ ok: boolean; error?: string }> =>
+    ipcRenderer.invoke('scanner:restore', backupPath)
 }
 
 contextBridge.exposeInMainWorld('api', api)

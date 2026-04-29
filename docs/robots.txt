@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sirelodeon419.github.io/CCleanKILLER/sitemap.xml

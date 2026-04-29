@@ -10,7 +10,7 @@ import type {
 
 export type { Category, ServiceInfo, TaskInfo, StartupEntry, UninstallEntry, ScanResult, LogEntry }
 
-export type AppScreen = 'scan' | 'scanning' | 'results' | 'removing' | 'complete'
+export type AppScreen = 'scan' | 'scanning' | 'results' | 'confirm' | 'removing' | 'complete'
 
 export type FilterCategory = 'all' | Category
 
@@ -29,6 +29,7 @@ declare global {
       onRemovalComplete: (cb: () => void) => void
       removeAllListeners: (channel: string) => void
       exportLog: (content: string) => Promise<{ ok: boolean; filePath?: string }>
+      restore: (backupPath: string) => Promise<{ ok: boolean; error?: string }>
     }
   }
 }

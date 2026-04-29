@@ -19,6 +19,7 @@ const ACTION_STYLES: Record<string, { icon: string; color: string }> = {
   startup_removed: { icon: '✓', color: '#4ade80' },
   path_removed: { icon: '✓', color: '#4ade80' },
   registry_removed: { icon: '✓', color: '#4ade80' },
+  backup_created: { icon: '⛨', color: '#60a5fa' },
   complete: { icon: '✓', color: '#22c55e' },
   skip: { icon: '→', color: '#555' },
   error: { icon: '✕', color: '#f87171' },
@@ -128,10 +129,12 @@ export default function RemovalScreen({ targets, log, setLog, onComplete }: Prop
                       ? '#f87171'
                       : entry.action === 'complete'
                         ? '#4ade80'
-                        : '#666'
+                        : entry.action === 'backup_created'
+                          ? '#60a5fa'
+                          : '#666'
                 }}
               >
-                {entry.message}
+                {entry.action === 'backup_created' ? `Registry backed up → ${entry.message}` : entry.message}
               </span>
             </div>
           )

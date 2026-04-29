@@ -4,7 +4,7 @@
 
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("scan", "remove")]
+    [ValidateSet("scan", "remove", "restore")]
     [string]$Action,
 
     [Parameter(Mandatory=$true)]
@@ -43,6 +43,16 @@ function Expand-EnvPath {
     $Path = $Path -replace '%Temp%', $env:TEMP
     $Path = $Path -replace '%UserProfile%', $env:USERPROFILE
     return $Path
+}
+
+function Convert-PSPathToRegPath {
+    param([string]$PSPath)
+    $PSPath = $PSPath -replace '^HKLM:\\', 'HKLM\'
+    $PSPath = $PSPath -replace '^HKCU:\\', 'HKCU\'
+    $PSPath = $PSPath -replace '^HKCR:\\', 'HKCR\'
+    $PSPath = $PSPath -replace '^HKU:\\', 'HKU\'
+    $PSPath = $PSPath -replace '^HKCC:\\', 'HKCC\'
+    return $PSPath
 }
 
 # ============================================================
@@ -194,6 +204,50 @@ function Write-Log {
 
 function Invoke-Remove {
     param([string[]]$TargetIds)
+
+    # Pre-backup: export all registry keys that will be deleted
+    $allRegKeysToBackup = @()
+    foreach ($tid in $TargetIds) {
+        $r = $rules | Where-Object { $_.id -eq $tid }
+        if ($r -and -not $r.detectOnly) {
+            foreach ($rk in $r.registryKeys) {
+                if (Test-Path $rk) { $allRegKeysToBackup += $rk }
+            }
+        }
+    }
+
+    if ($allRegKeysToBackup.Count -gt 0) {
+        try {
+            $backupDir = Join-Path $env:APPDATA "CCleanKILLER\backups"
+            New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+            $ts = Get-Date -Format "yyyyMMdd-HHmmss"
+            $backupFile = Join-Path $backupDir "backup-$ts.reg"
+
+            Set-Content -Path $backupFile -Value "Windows Registry Editor Version 5.00`r`n" -Encoding Unicode
+
+            $anyExported = $false
+            foreach ($rk in $allRegKeysToBackup) {
+                $regPath = Convert-PSPathToRegPath $rk
+                $tmpFile = Join-Path $env:TEMP "cck_tmp_$([System.Guid]::NewGuid().ToString('N')).reg"
+                & reg.exe export $regPath $tmpFile /y 2>$null | Out-Null
+                if ($LASTEXITCODE -eq 0 -and (Test-Path $tmpFile)) {
+                    $lines = Get-Content $tmpFile -Encoding Unicode | Select-Object -Skip 2
+                    if ($lines) {
+                        Add-Content -Path $backupFile -Value $lines -Encoding Unicode
+                        Add-Content -Path $backupFile -Value "" -Encoding Unicode
+                    }
+                    Remove-Item $tmpFile -Force -ErrorAction SilentlyContinue
+                    $anyExported = $true
+                }
+            }
+
+            if ($anyExported) {
+                Write-Log "system" "backup_created" $backupFile
+            }
+        } catch {
+            Write-Log "system" "info" "Registry backup skipped: $_"
+        }
+    }
 
     # Create restore point before making any changes
     try {
@@ -369,5 +423,17 @@ switch ($Action) {
         }
         $targetList = $Targets -split ','
         Invoke-Remove -TargetIds $targetList
+    }
+    "restore" {
+        if (-not $Targets -or -not (Test-Path $Targets)) {
+            Write-Host "RESTORE_FAILED:Backup file not found"
+            exit 1
+        }
+        & reg.exe import "$Targets" 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "RESTORE_OK"
+        } else {
+            Write-Host "RESTORE_FAILED:reg.exe import returned $LASTEXITCODE"
+        }
     }
 }

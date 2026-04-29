@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import TitleBar from './components/TitleBar'
 import ScanScreen from './components/ScanScreen'
 import ScanningScreen from './components/ScanningScreen'
 import ResultsScreen from './components/ResultsScreen'
+import ConfirmScreen from './components/ConfirmScreen'
 import RemovalScreen from './components/RemovalScreen'
 import CompleteScreen from './components/CompleteScreen'
 import type { AppScreen, ScanResult, LogEntry } from './types'
@@ -14,30 +15,48 @@ export default function App() {
   const [removalLog, setRemovalLog] = useState<LogEntry[]>([])
   const [removedCount, setRemovedCount] = useState(0)
   const [freedBytes, setFreedBytes] = useState(0)
+  const [backupPath, setBackupPath] = useState<string | null>(null)
+  const backupPathRef = useRef<string | null>(null)
 
   const handleScanComplete = useCallback((results: ScanResult[]) => {
     setScanResults(results)
     setScreen('results')
   }, [])
 
-  const handleRemove = useCallback(
-    (targets: string[]) => {
-      setRemovalTargets(targets)
-      setRemovalLog([])
+  // Go to confirm screen instead of removing immediately
+  const handleRemove = useCallback((targets: string[]) => {
+    setRemovalTargets(targets)
+    setScreen('confirm')
+  }, [])
 
-      // Calculate bytes to be freed
-      const bytes = scanResults
-        .filter((r) => targets.includes(r.Id))
-        .reduce((sum, r) => sum + (r.TotalSizeBytes || 0), 0)
-      setFreedBytes(bytes)
-      setRemovedCount(targets.length)
+  // Called from ConfirmScreen — actually starts removal
+  const handleConfirmRemove = useCallback(() => {
+    setRemovalLog([])
+    backupPathRef.current = null
 
-      setScreen('removing')
-    },
-    [scanResults]
-  )
+    const bytes = scanResults
+      .filter((r) => removalTargets.includes(r.Id))
+      .reduce((sum, r) => sum + (r.TotalSizeBytes || 0), 0)
+    setFreedBytes(bytes)
+    setRemovedCount(removalTargets.length)
+
+    setScreen('removing')
+  }, [scanResults, removalTargets])
+
+  // Intercepts setLog calls to capture backup_created entries
+  const handleSetLog: React.Dispatch<React.SetStateAction<LogEntry[]>> = useCallback((updater) => {
+    setRemovalLog((prev) => {
+      const next = typeof updater === 'function' ? (updater as (p: LogEntry[]) => LogEntry[])(prev) : updater
+      const last = next[next.length - 1]
+      if (last?.action === 'backup_created' && last.message !== backupPathRef.current) {
+        backupPathRef.current = last.message
+      }
+      return next
+    })
+  }, [])
 
   const handleRemovalComplete = useCallback(() => {
+    setBackupPath(backupPathRef.current)
     setScreen('complete')
   }, [])
 
@@ -47,8 +66,12 @@ export default function App() {
     setRemovalLog([])
     setRemovedCount(0)
     setFreedBytes(0)
+    setBackupPath(null)
+    backupPathRef.current = null
     setScreen('scan')
   }, [])
+
+  const confirmTargets = scanResults.filter((r) => removalTargets.includes(r.Id))
 
   return (
     <div className="flex flex-col h-screen bg-bg-primary overflow-hidden">
@@ -66,11 +89,18 @@ export default function App() {
         {screen === 'results' && (
           <ResultsScreen results={scanResults} onRemove={handleRemove} onReset={handleReset} />
         )}
+        {screen === 'confirm' && (
+          <ConfirmScreen
+            targets={confirmTargets}
+            onConfirm={handleConfirmRemove}
+            onBack={() => setScreen('results')}
+          />
+        )}
         {screen === 'removing' && (
           <RemovalScreen
             targets={removalTargets}
             log={removalLog}
-            setLog={setRemovalLog}
+            setLog={handleSetLog}
             onComplete={handleRemovalComplete}
           />
         )}
@@ -80,6 +110,7 @@ export default function App() {
             freedBytes={freedBytes}
             onReset={handleReset}
             log={removalLog}
+            backupPath={backupPath}
           />
         )}
       </main>

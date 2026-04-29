@@ -81,6 +81,45 @@ export function runScan(
   })
 }
 
+export function runRestore(backupPath: string): Promise<{ ok: boolean; error?: string }> {
+  return new Promise((resolve) => {
+    const scannerPath = getScannerPath()
+    const rulesPath = getRulesPath()
+
+    const ps = spawn('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      scannerPath,
+      '-Action',
+      'restore',
+      '-RulesPath',
+      rulesPath,
+      '-Targets',
+      backupPath
+    ])
+
+    let output = ''
+    ps.stdout.on('data', (data: Buffer) => { output += data.toString() })
+    ps.stderr.on('data', (data: Buffer) => { output += data.toString() })
+
+    ps.on('close', () => {
+      if (output.includes('RESTORE_OK')) {
+        resolve({ ok: true })
+      } else {
+        const msg = output.match(/RESTORE_FAILED:(.+)/)?.[1]?.trim() ?? 'Unknown error'
+        resolve({ ok: false, error: msg })
+      }
+    })
+
+    ps.on('error', (err) => {
+      resolve({ ok: false, error: err.message })
+    })
+  })
+}
+
 export function runRemoval(
   targets: string[],
   onLog: (entry: LogEntry) => void,

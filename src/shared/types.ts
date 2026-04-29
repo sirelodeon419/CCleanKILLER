@@ -53,6 +53,7 @@ export interface LogEntry {
     | 'startup_removed'
     | 'path_removed'
     | 'registry_removed'
+    | 'backup_created'
     | 'complete'
     | 'skip'
     | 'error'

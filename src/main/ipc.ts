@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { runScan, runRemoval } from './scanner'
+import { runScan, runRemoval, runRestore } from './scanner'
 import { checkAdmin } from './admin'
 
 export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void {
@@ -51,6 +51,15 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
     if (canceled || !filePath) return { ok: false }
     await writeFile(filePath, content, 'utf-8')
     return { ok: true, filePath }
+  })
+
+  // Restore registry from backup
+  ipcMain.handle('scanner:restore', async (_event, backupPath: string) => {
+    try {
+      return await runRestore(backupPath)
+    } catch (err) {
+      return { ok: false, error: String(err) }
+    }
   })
 
   // Remove
