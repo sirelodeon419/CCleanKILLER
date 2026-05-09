@@ -260,11 +260,7 @@
         "%AppData%\\Piriform",
         "%ProgramData%\\Gen Digital"
       ],
-      "registryKeys": [
-        "HKLM:\\SOFTWARE\\Piriform",
-        "HKCU:\\SOFTWARE\\Piriform",
-        "HKLM:\\SOFTWARE\\WOW6432Node\\Piriform"
-      ],
+      "registryKeys": [],
       "services": [],
       "scheduledTasks": [],
       "startupEntries": [],
@@ -290,21 +286,6 @@
       "startupEntries": ["swg"],
       "uninstallNames": ["Google Toolbar*"],
       "processNames": ["GoogleToolbarNotifier"]
-    },
-    {
-      "id": "chrome_bundled",
-      "name": "Google Chrome (CCleaner Offer)",
-      "vendor": "Google",
-      "category": "Offer",
-      "detectOnly": true,
-      "note": "Chrome may have been installed via a CCleaner offer. Flagged for awareness only - not auto-removed.",
-      "paths": [],
-      "registryKeys": [],
-      "services": [],
-      "scheduledTasks": [],
-      "startupEntries": [],
-      "uninstallNames": [],
-      "processNames": []
     }
   ]
 }
